@@ -39,7 +39,7 @@ Ensure you have the following installed on your system:
 2. **Create a virtual environment (optional but recommended):**
 
    ```bash
-   python3 -m venv myenv
+   python -m venv myenv
    source myenv/bin/activate  # On Windows, use `myenv\Scripts\activate`
    ```
 
