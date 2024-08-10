@@ -100,11 +100,11 @@ Contributions are welcome! Please follow these steps to contribute:
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the MIT License
 
 ## Contact
 
-For questions, suggestions, or contributions, feel free to reach out via [email@example.com](mailto:email@example.com).
+For questions, suggestions, or contributions, feel free to reach out 
 
 
 ### Customization
