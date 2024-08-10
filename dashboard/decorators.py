@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect
 
+
 def auth_users(view_func):
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -8,6 +9,7 @@ def auth_users(view_func):
         else:
             return view_func(request, *args, **kwargs)
     return wrapper
+
 
 def allowed_users(allowed_roles=[]):
     def decorators(view_func):

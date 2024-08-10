@@ -18,13 +18,7 @@
             <hr>
             <form method="POST">
                 {% csrf_token %}
-                {% if request.user.is_staff %}
-                    {{ form|crispy }}
-                {% else %}
-                    {{ form.name.label_tag }} {{ form.name|crispy }}
-                    {{ form.quantity.label_tag }} {{ form.quantity|crispy }}
-                    {{ form.category.label_tag }} {{ form.category|crispy }}
-                {% endif %}
+                {{ form|crispy }}
                 <input class="btn btn-success btn-block" type="submit" value="Add">
             </form>
         </div>
@@ -36,10 +30,8 @@
                     <th scope="col">Name</th>
                     <th scope="col">Category</th>
                     <th scope="col">Quantity</th>
-                    {% if request.user.is_staff %}
-                        <th scope="col">Description</th>
-                        <th scope="col">Price</th>
-                    {% endif %}
+                    <th scope="col">Description</th>
+                    <th scope="col">Price</th>
                     <th scope="col">Activity</th>
                 </tr>
             </thead>
@@ -49,10 +41,8 @@
                     <td>{{ product.name }}</td>
                     <td>{{ product.category }}</td>
                     <td>{{ product.quantity }}</td>
-                    {% if request.user.is_staff %}
-                        <td>{{ product.description }}</td>
-                        <td>{{ product.price }}</td>
-                    {% endif %}
+                    <td>{{ product.description }}</td>
+                    <td>{{ product.price }}</td>
                     <td>
                         <a class="btn btn-info btn-sm mr-2"
                             href="{% url 'dashboard-products-edit' product.id %}">Edit</a>

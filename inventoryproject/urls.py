@@ -31,7 +31,6 @@ urlpatterns = [
     path('profile/update/', user_views.profile_update,
          name='user-profile-update'),
     path('logout/', custom_logout, name='user-logout'),
-
 ]
 
 if settings.DEBUG:

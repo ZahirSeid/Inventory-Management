@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .models import Product, Order
 from django.contrib.auth.models import User
-from django.contrib import messages
+from .models import Product, Order
 from .forms import ProductForm, OrderForm
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .decorators import auth_users, allowed_users
-from datetime import date
+# Create your views here.
+
 
 @login_required(login_url='user-login')
 def index(request):
@@ -14,26 +14,25 @@ def index(request):
     product_count = product.count()
     order = Order.objects.all()
     order_count = order.count()
-    employee = User.objects.filter(groups=2)
-    employee_count = employee.count()
+    customer = User.objects.filter(groups=2)
+    customer_count = customer.count()
 
     if request.method == 'POST':
-        form = OrderForm(request.POST, user=request.user)
+        form = OrderForm(request.POST)
         if form.is_valid():
             obj = form.save(commit=False)
-            obj.employee = request.user
-            obj.borrowed_date = date.today()  # Automatically set the borrowed date to today
+            obj.customer = request.user
             obj.save()
             return redirect('dashboard-index')
     else:
-        form = OrderForm(user=request.user)
+        form = OrderForm()
     context = {
         'form': form,
         'order': order,
         'product': product,
         'product_count': product_count,
         'order_count': order_count,
-        'employee_count': employee_count,
+        'customer_count': customer_count,
     }
     return render(request, 'dashboard/index.html', context)
 
@@ -42,11 +41,11 @@ def index(request):
 def products(request):
     product = Product.objects.all()
     product_count = product.count()
-    employee = User.objects.filter(groups=2)
-    employee_count = employee.count()
+    customer = User.objects.filter(groups=2)
+    customer_count = customer.count()
     order = Order.objects.all()
     order_count = order.count()
-
+    product_quantity = Product.objects.filter(name='')
     if request.method == 'POST':
         form = ProductForm(request.POST)
         if form.is_valid():
@@ -59,7 +58,7 @@ def products(request):
     context = {
         'product': product,
         'form': form,
-        'employee_count': employee_count,
+        'customer_count': customer_count,
         'product_count': product_count,
         'order_count': order_count,
     }
@@ -68,43 +67,49 @@ def products(request):
 
 @login_required(login_url='user-login')
 def product_detail(request, pk):
-    context = {}
+    context = {
+
+    }
     return render(request, 'dashboard/products_detail.html', context)
 
-@login_required(login_url='user-login')
-@allowed_users(allowed_roles=['Admin'])
-def employees(request):
-    employee = User.objects.filter(groups=2)
-    employee_count = employee.count()
-    product = Product.objects.all()
-    product_count = product.count()
-    order = Order.objects.all()
-    order_count = order.count()
-    context = {
-        'employee': employee,
-        'employee_count': employee_count,
-        'product_count': product_count,
-        'order_count': order_count,
-    }
-    return render(request, 'dashboard/employees.html', context)
 
 @login_required(login_url='user-login')
 @allowed_users(allowed_roles=['Admin'])
-def employee_detail(request, pk):
-    employee = User.objects.filter(groups=2)
-    employee_count = employee.count()
+def customers(request):
+    customer = User.objects.filter(groups=2)
+    customer_count = customer.count()
     product = Product.objects.all()
     product_count = product.count()
     order = Order.objects.all()
     order_count = order.count()
-    employees = User.objects.get(id=pk)
     context = {
-        'employees': employees,
-        'employee_count': employee_count,
+        'customer': customer,
+        'customer_count': customer_count,
         'product_count': product_count,
         'order_count': order_count,
     }
-    return render(request, 'dashboard/employees_detail.html', context)
+    return render(request, 'dashboard/customers.html', context)
+
+
+@login_required(login_url='user-login')
+@allowed_users(allowed_roles=['Admin'])
+def customer_detail(request, pk):
+    customer = User.objects.filter(groups=2)
+    customer_count = customer.count()
+    product = Product.objects.all()
+    product_count = product.count()
+    order = Order.objects.all()
+    order_count = order.count()
+    customers = User.objects.get(id=pk)
+    context = {
+        'customers': customers,
+        'customer_count': customer_count,
+        'product_count': product_count,
+        'order_count': order_count,
+
+    }
+    return render(request, 'dashboard/customers_detail.html', context)
+
 
 @login_required(login_url='user-login')
 @allowed_users(allowed_roles=['Admin'])
@@ -122,6 +127,7 @@ def product_edit(request, pk):
     }
     return render(request, 'dashboard/products_edit.html', context)
 
+
 @login_required(login_url='user-login')
 @allowed_users(allowed_roles=['Admin'])
 def product_delete(request, pk):
@@ -135,10 +141,28 @@ def product_delete(request, pk):
     return render(request, 'dashboard/products_delete.html', context)
 
 @login_required(login_url='user-login')
-def order(request):
-    orders = Order.objects.all()
+def view_product_details(request, pk):
+    product = get_object_or_404(Product, pk=pk)
     context = {
-        'order': orders,
+        'product': product
+    }
+    return render(request, 'dashboard/product_detail_view.html', context)
+
+
+@login_required(login_url='user-login')
+def order(request):
+    order = Order.objects.all()
+    order_count = order.count()
+    customer = User.objects.filter(groups=2)
+    customer_count = customer.count()
+    product = Product.objects.all()
+    product_count = product.count()
+
+    context = {
+        'order': order,
+        'customer_count': customer_count,
+        'product_count': product_count,
+        'order_count': order_count,
     }
     return render(request, 'dashboard/order.html', context)
 
@@ -154,4 +178,18 @@ def order_action(request, order_id):
             order.status = 'Denied'
             messages.success(request, 'Order denied successfully.')
         order.save()
+    return redirect('dashboard-order')
+
+@login_required
+def order_accept(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order.status = 'accepted'
+    order.save()
+    return redirect('dashboard-order')
+
+@login_required
+def order_deny(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order.status = 'denied'
+    order.save()
     return redirect('dashboard-order')
