@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils import timezone
 # Create your models here.
 CATEGORY = (
     ('Stationary', 'Stationary'),
@@ -22,9 +22,9 @@ class Product(models.Model):
 
 class Order(models.Model):
     name = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
-    customer = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    employee = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     order_quantity = models.PositiveIntegerField(null=True)
-    order_date = models.DateTimeField(auto_now_add=True)
+    order_date = models.DateTimeField(default=timezone.now) 
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('accepted', 'Accepted'),

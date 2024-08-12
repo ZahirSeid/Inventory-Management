@@ -152,3 +152,6 @@ LOGIN_REDIRECT_URL = 'dashboard-index'
 LOGIN_URL = 'user-login'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+USE_TZ = True  # Enable timezone support
+TIME_ZONE = 'Etc/GMT-3'  # Set the default timezone to UTC+3

@@ -5,7 +5,8 @@ from .forms import ProductForm, OrderForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .decorators import auth_users, allowed_users
-# Create your views here.
+from django.contrib.auth.models import Group
+
 
 
 @login_required(login_url='user-login')
@@ -14,14 +15,14 @@ def index(request):
     product_count = product.count()
     order = Order.objects.all()
     order_count = order.count()
-    customer = User.objects.filter(groups=2)
-    customer_count = customer.count()
+    employee = User.objects.filter(groups=2)
+    employee_count = employee.count()
 
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
             obj = form.save(commit=False)
-            obj.customer = request.user
+            obj.employee = request.user
             obj.save()
             return redirect('dashboard-index')
     else:
@@ -32,7 +33,7 @@ def index(request):
         'product': product,
         'product_count': product_count,
         'order_count': order_count,
-        'customer_count': customer_count,
+        'employee_count': employee_count,
     }
     return render(request, 'dashboard/index.html', context)
 
@@ -41,8 +42,8 @@ def index(request):
 def products(request):
     product = Product.objects.all()
     product_count = product.count()
-    customer = User.objects.filter(groups=2)
-    customer_count = customer.count()
+    employee = User.objects.filter(groups=2)
+    employee_count = employee.count()
     order = Order.objects.all()
     order_count = order.count()
     product_quantity = Product.objects.filter(name='')
@@ -58,7 +59,7 @@ def products(request):
     context = {
         'product': product,
         'form': form,
-        'customer_count': customer_count,
+        'employee_count': employee_count,
         'product_count': product_count,
         'order_count': order_count,
     }
@@ -75,41 +76,85 @@ def product_detail(request, pk):
 
 @login_required(login_url='user-login')
 @allowed_users(allowed_roles=['Admin'])
-def customers(request):
-    customer = User.objects.filter(groups=2)
-    customer_count = customer.count()
+def employees(request):
+    # Retrieve the group by name
+    try:
+        employee_group = Group.objects.get(name='employees')
+    except Group.DoesNotExist:
+        employee_group = None
+
+    if employee_group:
+        # Filter users who belong to the 'employees' group
+        employee = User.objects.filter(groups=employee_group)
+    else:
+        employee = User.objects.none()  # No users if the group doesn't exist
+
+    employee_count = employee.count()
     product = Product.objects.all()
     product_count = product.count()
     order = Order.objects.all()
     order_count = order.count()
+    
     context = {
-        'customer': customer,
-        'customer_count': customer_count,
+        'employee': employee,
+        'employee_count': employee_count,
         'product_count': product_count,
         'order_count': order_count,
     }
-    return render(request, 'dashboard/customers.html', context)
+    return render(request, 'dashboard/employees.html', context)
 
 
 @login_required(login_url='user-login')
 @allowed_users(allowed_roles=['Admin'])
-def customer_detail(request, pk):
-    customer = User.objects.filter(groups=2)
-    customer_count = customer.count()
+def employee_detail(request, pk):
+    # Retrieve the group by name
+    try:
+        employee_group = Group.objects.get(name='employees')
+    except Group.DoesNotExist:
+        employee_group = None
+
+    if employee_group:
+        # Filter users who belong to the 'employees' group
+        employee = User.objects.filter(groups=employee_group)
+    else:
+        employee = User.objects.none()  # No users if the group doesn't exist
+
+    try:
+        # Fetch the specific employee by primary key (pk)
+        employees = employee.get(id=pk)
+    except User.DoesNotExist:
+        employees = None
+
+    employee_count = employee.count()
     product = Product.objects.all()
     product_count = product.count()
     order = Order.objects.all()
     order_count = order.count()
-    customers = User.objects.get(id=pk)
+    
     context = {
-        'customers': customers,
-        'customer_count': customer_count,
+        'employees': employees,
+        'employee_count': employee_count,
         'product_count': product_count,
         'order_count': order_count,
-
     }
-    return render(request, 'dashboard/customers_detail.html', context)
+    return render(request, 'dashboard/employees_detail.html', context)
 
+@login_required(login_url='user-login')
+@allowed_users(allowed_roles=['Admin'])
+def employee_order_history(request, pk):
+    # Fetch the specific employee using the primary key
+    employee = get_object_or_404(User, pk=pk)
+
+    # Filter orders for this specific employee
+    orders = Order.objects.filter(employee=employee)
+
+    # Context to be passed to the template
+    context = {
+        'employee': employee,
+        'orders': orders,
+    }
+
+    return render(request, 'dashboard/employee_order_history.html', context)
 
 @login_required(login_url='user-login')
 @allowed_users(allowed_roles=['Admin'])
@@ -153,14 +198,14 @@ def view_product_details(request, pk):
 def order(request):
     order = Order.objects.all()
     order_count = order.count()
-    customer = User.objects.filter(groups=2)
-    customer_count = customer.count()
+    employee = User.objects.filter(groups=2)
+    employee_count = employee.count()
     product = Product.objects.all()
     product_count = product.count()
 
     context = {
         'order': order,
-        'customer_count': customer_count,
+        'employee_count': employee_count,
         'product_count': product_count,
         'order_count': order_count,
     }

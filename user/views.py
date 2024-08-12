@@ -10,8 +10,8 @@ def register(request):
         if form.is_valid():
             user = form.save()
 
-            # Get or create the 'Customers' group
-            group, created = Group.objects.get_or_create(name='Customers')
+            # Get or create the 'employees' group
+            group, created = Group.objects.get_or_create(name='employees')
             user.groups.add(group)
 
             # Log the user in after successful registration

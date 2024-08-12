@@ -27,15 +27,23 @@
                                 <th scope="col">Product</th>
                                 <th scope="col">Category</th>
                                 <th scope="col">Quantity</th>
+                                <th scope="col">Order Date</th>
+                                <th scope="col">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for order in order %}
-                            {% if order.customer == user %}
+                            {% if order.employee == user %}
                             <tr>
-                                <td>{{ order.name }}</td>
+                                <td>
+                                    <a href="{% url 'product-detail-view' order.name.id %}">
+                                        {{ order.name }}
+                                    </a>
+                                </td>
                                 <td>{{ order.name.category }}</td>
                                 <td>{{ order.order_quantity }}</td>
+                                <td>{{ order.order_date }}</td>
+                                <td>{{ order.status }}</td>
                             </tr>
                             {% endif %}
                             {% endfor %}
