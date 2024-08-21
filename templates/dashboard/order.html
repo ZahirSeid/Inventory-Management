@@ -11,8 +11,11 @@
                 <tr>
                     <th scope="col">Product</th>
                     <th scope="col">Category</th>
+                    <th scope="col">Serial Number</th>
                     <th scope="col">Quantity</th>
-                    <th scope="col">Odered by</th>
+                    <th scope="col">Unit Price</th>
+                    <th scope="col">Total Price</th>
+                    <th scope="col">Ordered by</th>
                     <th scope="col">Status</th>
                     <th scope="col">Actions</th>
                 </tr>
@@ -20,9 +23,12 @@
             <tbody>
                 {% for order in order %}
                 <tr>
-                    <td>{{ order.name }}</td>
+                    <td>{{ order.name.name }}</td>
                     <td>{{ order.name.category }}</td>
+                    <td>{{ order.name.serial_number }}</td>
                     <td>{{ order.order_quantity }}</td>
+                    <td>{{ order.name.unit_price }}</td>
+                    <td>{{ order.total_price }}</td>
                     <td>{{ order.employee.username }}</td>
                     <td>{{ order.get_status_display }}</td>
                     <td>

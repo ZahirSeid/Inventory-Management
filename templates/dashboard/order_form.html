@@ -11,7 +11,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const nameSelect = document.querySelector('select[name="name"]');
     const categoryField = document.querySelector('select[name="category"]');
-    const priceField = document.querySelector('input[name="price"]');
+    const priceField = document.querySelector('input[name="unit_price"]');
     const descriptionField = document.querySelector('textarea[name="description"]');
 
     nameSelect.addEventListener('change', function() {
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 categoryField.value = data.category;
-                priceField.value = data.price;
+                priceField.value = data.unit_price;
                 descriptionField.value = data.description;
             });
     });

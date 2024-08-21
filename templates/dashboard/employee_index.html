@@ -29,6 +29,7 @@
                                 <th scope="col">Quantity</th>
                                 <th scope="col">Order Date</th>
                                 <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -37,13 +38,20 @@
                             <tr>
                                 <td>
                                     <a href="{% url 'product-detail-view' order.name.id %}">
-                                        {{ order.name }}
+                                        {{ order.name.name }}
                                     </a>
                                 </td>
                                 <td>{{ order.name.category }}</td>
                                 <td>{{ order.order_quantity }}</td>
                                 <td>{{ order.order_date }}</td>
-                                <td>{{ order.status }}</td>
+                                <td>{{ order.get_status_display }}</td>
+                                <td>
+                                    {% if order.status == 'accepted' %}
+                                    <a href="{% url 'order-receive' order.id %}" class="btn btn-sm btn-success">Receive</a>
+                                    {% elif order.status == 'received' %}
+                                    <a href="{% url 'order-return' order.id %}" class="btn btn-sm btn-warning">Return</a>
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% endif %}
                             {% endfor %}

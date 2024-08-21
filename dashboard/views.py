@@ -217,10 +217,16 @@ def order_action(request, order_id):
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'accept':
-            order.status = 'Accepted'
+            order.status = 'accepted'
             messages.success(request, 'Order accepted successfully.')
+        elif action == 'receive':
+            order.status = 'received'
+            messages.success(request, 'Order marked as received.')
+        elif action == 'return':
+            order.status = 'returned'
+            messages.success(request, 'Order marked as returned.')
         elif action == 'deny':
-            order.status = 'Denied'
+            order.status = 'denied'
             messages.success(request, 'Order denied successfully.')
         order.save()
     return redirect('dashboard-order')
@@ -238,3 +244,17 @@ def order_deny(request, order_id):
     order.status = 'denied'
     order.save()
     return redirect('dashboard-order')
+
+@login_required
+def order_return(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order.status = 'return'
+    order.save()
+    return redirect('dashboard-index')
+
+@login_required
+def order_receive(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order.status = 'received'
+    order.save()
+    return redirect('dashboard-index')

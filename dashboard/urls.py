@@ -17,5 +17,7 @@ urlpatterns = [
     path('order/', views.order, name='dashboard-order'),
     path('order/action/<int:order_id>/accept/', views.order_accept, name='order-accept'),
     path('order/action/<int:order_id>/deny/', views.order_deny, name='order-deny'),
+    path('order/action/<int:order_id>/return/', views.order_return, name='order-return'),
+    path('order/action/<int:order_id>/receive/', views.order_receive, name='order-receive'),
     path('product-details/<int:pk>/', views.view_product_details, name='product-detail-view'),
 ]
